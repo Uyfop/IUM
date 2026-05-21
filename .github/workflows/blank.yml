@@ -30,9 +30,9 @@ jobs:
       - name: Train
         working-directory: repo
         run: |
-          python src/torchtrain.py
+          python uv-inzynieria/src/torchtrain.py
 
       - name: Predict
         working-directory: repo
         run: |
-          python src/torchpredict.py
+          python uv-inzynieria/src/torchpredict.py
