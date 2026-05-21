@@ -1,0 +1,51 @@
+name: Train and Evaluate
+
+on:
+  workflow_dispatch:
+    inputs:
+      epochs:
+        description: "Number of epochs"
+        required: true
+        default: "10"
+
+jobs:
+  train:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install torch pandas numpy scikit-learn
+
+      - name: Train model
+        run: |
+          python src/torchtrain.py
+
+  evaluate:
+    runs-on: windows-latest
+    needs: train
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install torch pandas numpy scikit-learn
+
+      - name: Evaluate model
+        run: |
+          python src/torchpredict.py
