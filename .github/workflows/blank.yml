@@ -1,4 +1,4 @@
-name: Train and Evaluate
+name: Train WMI Repo
 
 on:
   workflow_dispatch:
@@ -10,11 +10,12 @@ on:
 
 jobs:
   train:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Clone WMI repo
+        run: |
+          git clone https://oauth2:${{ secrets.WMI_TOKEN }}@git.wmi.amu.edu.pl/s481839/InzynieriaUczeniaMaszynowego.git repo
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -23,29 +24,15 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install torch pandas numpy scikit-learn
+          pip install --upgrade pip
+          pip install torch pandas numpy scikit-learn joblib mlflow==2.12.1
 
-      - name: Train model
+      - name: Train
+        working-directory: repo
         run: |
           python src/torchtrain.py
 
-  evaluate:
-    runs-on: windows-latest
-    needs: train
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install dependencies
-        run: |
-          pip install torch pandas numpy scikit-learn
-
-      - name: Evaluate model
+      - name: Predict
+        working-directory: repo
         run: |
           python src/torchpredict.py
